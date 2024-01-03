@@ -1,63 +1,116 @@
 import {
-  ChatBubbleOvalLeftIcon,
-  HeartIcon,
-  PaperAirplaneIcon,
+	ChatBubbleOvalLeftIcon,
+	HeartIcon,
+	PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
-import type { TPost } from "~/types";
-import { ImageComponent } from ".";
-import { Form } from "@remix-run/react";
-import { useState } from "react";
+import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
+import type { TComments, TPost, TUser } from "~/types";
+import { AddCommentInput, CommentSection, ImageComponent } from ".";
+import { Form, Link } from "@remix-run/react";
+import { useRef, useState } from "react";
+import classNames from "classnames";
+import { hasLikedPost } from "~/lib/database.server";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 export function Card({
-  post,
-
-  profilePage,
+	post,
+	link,
+	href,
+	currentUser,
+	comments,
 }: {
-  post: TPost;
-
-  profilePage?: boolean;
+	link?: boolean;
+	href?: string;
+	post: TPost;
+	currentUser: TUser;
+	comments: TComments[];
 }) {
-  const [showComments, setShowComments] = useState(false);
-  return (
-    <div className=" aspect-[4/5] max-w-sm rounded-sm border text-base-content  border-neutral  ">
-      <ImageComponent
-        src={post.image}
-        className="w-full h-full"
-        alt={post.title}
-      />
-      <div className="mx-2">
-        <section className="flex gap-2 my-1 text-neutral-content">
-          <HeartIcon className="w-8 h-8" />
-          <Form method="post">
-            <button name="_action" value="comment">
-              <input type="hidden" name="post_id" value={post.id} />
-              <ChatBubbleOvalLeftIcon className="w-8 h-8" />
-            </button>
-          </Form>
-          <PaperAirplaneIcon className="w-8 h-8" />
-        </section>
+	const currentPostComments = comments.filter(
+		(comment) => comment.post_id! === post.id
+	);
+	const [comment, setComment] = useState("");
+	const commentInputRef = useRef<HTMLInputElement>(null);
+	console.log(post.user);
+	return (
+		<div className=" my-1 aspect-[4/5] max-w-sm rounded-sm  text-base-content    ">
+			<div className="flex gap-2 my-2 items-center">
+				<Link to={`/user/${post.user?.username}`} className="avatar ">
+					<div className="w-9 h-9 rounded-full ring ring-primary ring-offset-base-100 ring-offset-1">
+						<img src={post.user?.avatar} />
+					</div>
+				</Link>
+				<Link to={`/user/${post.user?.username}`}>
+					<p>{post.user?.username}</p>
+				</Link>
+				<div
+					className="tooltip tooltip-bottom"
+					data-tip={dayjs(post.created_at).format("MMMM, D YYYY")}
+				>
+					<p className="text-gray-400">
+						{dayjs().diff(post.created_at, "week")}w
+					</p>
+				</div>
+			</div>
 
-        {!profilePage && (
-          <p className="text-lg font-semibold">
-            {post?.user && post.user[0].username}
-          </p>
-        )}
-        <p>{post.title}</p>
-        <div>
-          <button onClick={() => setShowComments(true)}>
-            Show Comments...
-          </button>
-          {showComments &&
-            post?.comments?.map((comment) => (
-              <div key={comment.comment.id} className="rounded-md border">
-                <div className="p-1">
-                  <p>{comment.comment.text}</p>
-                  <p>{comment.user.username}</p>
-                  <p>{comment.comment.created_at}</p>
-                </div>
-              </div>
-            ))}
-        </div>
-      </div>
-    </div>
-  );
+			<ImageComponent
+				src={post.image}
+				className=" mt-3 mb-2 w-full h-full border border-neutral"
+				alt={post.title}
+			/>
+
+			<div className=" pb-4 border-b border-b-neutral">
+				<div className="">
+					<section className="flex gap-2 my-1 text-neutral-content">
+						<Form method="post">
+							<input type="hidden" name="post_id" value={post.id} />
+							<button name="_action" value="like">
+								{post.likes.find((like) => like.user.id === currentUser.id) ? (
+									<HeartIconSolid className="w-7 h-7" />
+								) : (
+									<HeartIcon className="w-7 h-7" />
+								)}
+							</button>
+						</Form>
+
+						<button onClick={() => commentInputRef.current?.focus()}>
+							<ChatBubbleOvalLeftIcon className="w-7 h-7" />
+						</button>
+						<PaperAirplaneIcon className="w-7 h-7" />
+					</section>
+
+					<p className="text-sm font-semibold">{post.likes.length} likes</p>
+					<div className="flex gap-1">
+						<Link to={`/user/${post.user?.username}`} className="font-semibold">
+							{post.user?.username}
+						</Link>
+						<p>{post.title}</p>
+					</div>
+					<Link to={`/post/${post.id}`} className="text-sm text-gray-400">
+						View all {currentPostComments.length} comments
+					</Link>
+					<div className="flex gap-1">
+						<Link
+							to={`/user/${
+								currentPostComments[comments.length - 1]?.user.username
+							}`}
+							className="font-semibold"
+						>
+							{currentPostComments[comments.length - 1]?.user.username}
+						</Link>
+						<p>{currentPostComments[comments.length - 1]?.comment.text}</p>
+					</div>
+					<AddCommentInput
+						ref={commentInputRef}
+						commentInput={comment}
+						comments={comments}
+						parentId=""
+						post_id={post.id}
+						setCommentInput={setComment}
+					/>
+				</div>
+			</div>
+		</div>
+	);
 }
