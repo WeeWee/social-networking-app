@@ -11,15 +11,9 @@ export const ImageComponent = ({
   alt: string;
 }) => {
   const [hasLoaded, setHasLoaded] = useState(false);
-  const [imgSrc, setImgSrc] = useState(src);
   useEffect(() => {
-    const img = new Image();
-    img.src = src;
-    img.onload = () => {
-      setImgSrc(src);
-      setHasLoaded(true);
-    };
-  }, [src]);
+    setHasLoaded(true);
+  }, []);
   return (
     <div className={className}>
       {!hasLoaded && (
@@ -36,11 +30,12 @@ export const ImageComponent = ({
         </div>
       )}
       <img
-        src={imgSrc}
+        src={src}
         className={classNames(
-          { "h-full w-full object-cover aspect-[4/5]": true },
+          { "h-full w-full object-cover": true },
           { hidden: !hasLoaded }
         )}
+        onLoad={() => setHasLoaded(true)}
         alt={alt}
       />
     </div>

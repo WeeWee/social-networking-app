@@ -6,11 +6,19 @@ import {
   unstable_parseMultipartFormData,
   json,
 } from "@remix-run/node";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 import { Card } from "~/components";
 import { getUser, getUserId } from "~/lib/auth.server";
-import { addComment, addPost, getPosts } from "~/lib/database.server";
-import type { TPost } from "~/types";
+import {
+  addComment,
+  addPost,
+  getComments,
+  getPosts,
+  hasLikedPost,
+  likePost,
+  unLikePost,
+} from "~/lib/database.server";
+import type { TComments, TPost, TUser } from "~/types";
 
 export const meta: MetaFunction = () => {
   return [
@@ -21,7 +29,9 @@ export const meta: MetaFunction = () => {
 export const loader: LoaderFunction = async ({ request }) => {
   const response = new Response();
   const posts = await getPosts(request, response);
-  return posts;
+  const comments = await getComments(request, response);
+  const user = await getUser(request, response);
+  return { user: user?.user, posts, comments };
 };
 export const action: ActionFunction = async ({ request }) => {
   const uploadHandler = unstable_createMemoryUploadHandler();
@@ -29,6 +39,7 @@ export const action: ActionFunction = async ({ request }) => {
     request,
     uploadHandler
   );
+
   const _action = formData.get("_action");
   const response = new Response();
   const currentUser = await getUser(request, response);
@@ -48,31 +59,65 @@ export const action: ActionFunction = async ({ request }) => {
       null,
       currentUser?.user.id as string
     );
+    return json(null, { headers: response.headers });
+  }
+  if (_action === "like") {
+    const hasLiked = await hasLikedPost(
+      request,
+      response,
+      currentUser?.user.id as string,
+      formData.get("post_id") as string
+    );
+    if (hasLiked) {
+      await unLikePost(
+        request,
+        response,
+        currentUser?.user.id as string,
+        formData.get("post_id") as string
+      );
+    } else {
+      await likePost(
+        request,
+        response,
+        currentUser?.user.id as string,
+        formData.get("post_id") as string
+      );
+    }
+    return json(null, { headers: response.headers });
   }
 };
 export default function Index() {
-  const posts = useLoaderData() as TPost[];
-
+  const { user, posts, comments } = useLoaderData() as {
+    user: TUser;
+    posts: TPost[];
+    comments: TComments[];
+  };
   return (
     <div className=" ">
       <Form method="post" encType="multipart/form-data">
         <input name="image" type="file" accept="image/png, image/jpeg" />
         <input name="title" />
-        <button>Add Post</button>
+        <button name="_action" value="add-post">
+          Add Post
+        </button>
       </Form>
-      <div className="grid max-w-xl mx-auto">
+      <div className="grid max-w-lg mx-auto">
         {posts &&
           posts.map((post) => {
             if (post?.user)
               return (
-                <Link key={post.id} to={`/user/${post?.user[0].username}`}>
-                  <Card post={post} />
-                </Link>
+                <Card
+                  post={post}
+                  link
+                  href={`/user/${post.user.username}`}
+                  key={post.id}
+                  currentUser={user}
+                  comments={comments}
+                />
               );
-            else return <></>;
+            else return <div key={post.id}></div>;
           })}
       </div>
     </div>
   );
 }
-

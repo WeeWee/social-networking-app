@@ -212,4 +212,5 @@ export {
   getUserByUsername,
   getUser,
   getUserId,
+  getUserById
 };

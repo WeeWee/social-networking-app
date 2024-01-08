@@ -1,5 +1,7 @@
 import { createServerClient } from "@supabase/auth-helpers-remix";
-import type { TPost, TPostData, TUser } from "./../types";
+import type { TComment, TComments, TPost, TPostData, TUser } from "./../types";
+import { PostgrestError } from "@supabase/supabase-js";
+import { getUserById } from "./auth.server";
 
 const supabaseUrl = process.env.SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_API_KEY!;
@@ -9,41 +11,69 @@ const supabase = (request: Request, response: Response) =>
 const getPosts = async (request: Request, response: Response) => {
   const { data, error } = await supabase(request, response)
     .from("posts")
-    .select(`id, title, image_bucket_id, image_name, user:users(id, username)`);
+    .select(
+      `
+    id, title, image_bucket_id, image_name, created_at, 
+    user:users(id, username, avatar_name, avatar_bucket_id),
+	likes:post_like(id, user:users!post_like_user_id_fkey(id, username))
+  `
+    )
+    .returns<TPostData[]>();
   if (error) {
     console.error(error);
     return null;
   }
   const postsWithImages = await Promise.all(
-    data.map(async (post: TPostData) => {
-      const image = getImage(
-        request,
-        response,
-        post.image_bucket_id,
-        post.image_name
-      );
-
-      return { ...post, image: image.data.publicUrl };
+    data.map(async (post) => {
+      const image = getImage(request, response, post as TPostData);
+      const avatar = getAvatar(request, response, post.user!);
+      const { avatar_name, avatar_bucket_id, ...restUser } = post.user!;
+      const newUser = { avatar: avatar.data.publicUrl, ...restUser };
+      const { image_name, image_bucket_id, user, ...restPost } = post;
+      return { user: newUser, image: image.data.publicUrl, ...restPost };
     })
   );
   return postsWithImages as TPost[];
 };
-const getImage = (
-  request: Request,
-  response: Response,
-  image_bucket_id: string,
-  image_name: string
-) => {
+const getImage = (request: Request, response: Response, post: TPostData) => {
   return supabase(request, response)
-    .storage.from(image_bucket_id)
-    .getPublicUrl(image_name);
+    .storage.from(post.image_bucket_id)
+    .getPublicUrl(post.image_name);
 };
 const getAvatar = (request: Request, response: Response, user: TUser) => {
   return supabase(request, response)
     .storage.from(user.avatar_bucket_id!)
     .getPublicUrl(user.avatar_name!);
 };
-
+const getComments = async (request: Request, response: Response) => {
+  const { data, error } = (await supabase(request, response)
+    .from("post_comment")
+    .select(
+      "post_id, comment:comments!post_comment_comment_id_fkey(id,text,created_at), parent_comment:comments!post_comment_parent_comment_id_fkey(id, text, created_at), user:users!post_comment_user_id_fkey(id, username, avatar_name, avatar_bucket_id)"
+    )) as {
+    data: TComments[] | null;
+    error: PostgrestError | null;
+  };
+  console.log(data);
+  if (error) {
+    console.error("get comments ", error);
+    return null;
+  }
+  const commentsWithAvatar = await Promise.all(
+    // @ts-ignore
+    data.map(async (comment) => {
+      const userAvatar = getAvatar(request, response, comment.user as TUser);
+      const { avatar_bucket_id, avatar_name, ...restUser } = comment.user;
+      return {
+        user: { avatar: userAvatar.data.publicUrl, ...restUser },
+        parent_comment: comment.parent_comment,
+        comment: comment.comment,
+        post_id: comment.post_id,
+      };
+    })
+  );
+  return commentsWithAvatar;
+};
 const getPostsByUserId = async (
   request: Request,
   response: Response,
@@ -52,31 +82,145 @@ const getPostsByUserId = async (
   const { data, error } = await supabase(request, response)
     .from("posts")
     .select(
-      `id, title, image_name, image_bucket_id, created_at, user:users!inner(id, username), comments:post_comment(comment:comments!post_comment_comment_id_fkey(id,text,created_at),parent_comment:comments!post_comment_parent_comment_id_fkey(id,text,created_at), user:users!post_comment_user_id_fkey(id, username))`
+      `id, title, image_name, image_bucket_id, created_at, user:users!inner(id, username),likes:post_like(id, user:users!post_like_user_id_fkey(id, username, avatar_name, avatar_bucket_id)), comments:post_comment(id)`
     )
     .eq("user.id", id);
+
   if (error) {
-    console.error(error);
+    console.error("post by user id ", error);
     return null;
   }
-  /* console.log("posts data: ", data); */
+
   const postsWithImages = await Promise.all(
     // @ts-ignore
     data.map(async (post: TPostData) => {
-      const image = getImage(
-        request,
-        response,
-        post.image_bucket_id,
-        post.image_name
-      );
+      const image = getImage(request, response, post);
+
       const { created_at, image_bucket_id, image_name, ...restPost } = post;
 
-      console.log(post.comments);
       return { ...restPost, image: image.data.publicUrl };
     })
   );
 
   return postsWithImages;
+};
+const getPostById = async (
+  request: Request,
+  response: Response,
+  id: string
+) => {
+  const {
+    data,
+    error,
+  }: { data: TPostData | null; error: PostgrestError | null } = await supabase(
+    request,
+    response
+  )
+    .from("posts")
+    .select(
+      `id, title, image_name, image_bucket_id, created_at, user:users!inner(id, username, avatar_bucket_id, avatar_name), likes:post_like(id, user:users!post_like_user_id_fkey(id, username, avatar_name, avatar_bucket_id))`
+    )
+    .eq("id", id)
+    .single();
+  if (error) {
+    console.error("post by id ", error);
+    return null;
+  }
+  const image = getImage(request, response, data!);
+
+  const { image_bucket_id, image_name, user, ...restPost } = data!;
+  const userWAvatar = await getUserById(request, response, user?.id as string);
+  return {
+    user: userWAvatar?.user,
+    ...restPost,
+    image: image.data.publicUrl,
+  } as TPost;
+};
+const getCommentsByPostId = async (
+  request: Request,
+  response: Response,
+  post_id: string
+) => {
+  const { data, error } = (await supabase(request, response)
+    .from("post_comment")
+    .select(
+      "comment:comments!post_comment_comment_id_fkey(id,text,created_at), parent_comment:comments!post_comment_parent_comment_id_fkey(id, text, created_at), user:users!post_comment_user_id_fkey(id, username, avatar_name, avatar_bucket_id)"
+    )
+    .eq("post_id", post_id)) as {
+    data: TComments[] | null;
+    error: PostgrestError | null;
+  };
+  if (error) {
+    console.error(error);
+    return null;
+  }
+  const commentsWithAvatar = await Promise.all(
+    // @ts-ignore
+    data.map(async (comment) => {
+      const userAvatar = getAvatar(request, response, comment.user as TUser);
+      const { avatar_bucket_id, avatar_name, ...restUser } = comment.user;
+      return {
+        user: { avatar: userAvatar.data.publicUrl, ...restUser },
+        parent_comment: comment.parent_comment,
+        comment: comment.comment,
+      };
+    })
+  );
+  return commentsWithAvatar;
+};
+const likePost = async (
+  request: Request,
+  response: Response,
+  user_id: string,
+  post_to_like_id: string
+) => {
+  const isPostLiked = await hasLikedPost(
+    request,
+    response,
+    user_id,
+    post_to_like_id
+  );
+  if (!isPostLiked) {
+    const likepost = await supabase(request, response)
+      .from("post_like")
+      .insert({ user_id, post_id: post_to_like_id })
+      .select();
+    if (likepost.error) {
+      console.error("like post ", likepost.error);
+    }
+  }
+  return null;
+};
+const unLikePost = async (
+  request: Request,
+  response: Response,
+  user_id: string,
+  post_to_remove_id: string
+) => {
+  const removeLike = await supabase(request, response)
+    .from("post_like")
+    .delete()
+    .eq("user_id", user_id)
+    .eq("post_id", post_to_remove_id)
+    .select();
+  if (removeLike.error) {
+    console.error("remove like ", removeLike.error);
+  }
+
+  return null;
+};
+const hasLikedPost = async (
+  request: Request,
+  response: Response,
+  user_id: string,
+  liked_post_id: string
+) => {
+  const isPostLiked = await supabase(request, response)
+    .from("post_like")
+    .select()
+    .eq("user_id", user_id)
+    .eq("post_id", liked_post_id);
+  return isPostLiked.data && isPostLiked.data.length > 0;
 };
 const getPostById = async (
   request: Request,
@@ -111,7 +255,7 @@ const followUser = async (
     .select();
 
   if (follower.error) {
-    console.error(follower.error);
+    console.error("follow user ", follower.error);
     return null;
   }
   return null;
@@ -129,7 +273,7 @@ const unfollowUser = async (
     .eq("following_id", user_to_unfollow_id)
     .select();
   if (follower.error) {
-    console.error(follower.error);
+    console.error("unfollow user ", follower.error);
     return null;
   }
   return null;
@@ -146,7 +290,7 @@ const isFollowing = async (
     .eq("follower_id", user_id)
     .eq("following_id", target_user_id);
   if (error) {
-    console.error(error);
+    console.error("is following ", error);
     return false;
   }
 
@@ -185,6 +329,7 @@ const addPost = async (
       title,
       image_bucket_id: "images",
       image_name: finalImagePath,
+      user_id,
     })
     .select()
     .single();
@@ -192,9 +337,6 @@ const addPost = async (
     console.error(post.error);
     return null;
   }
-  await supabase(request, response)
-    .from("post_user")
-    .insert({ user_id, post_id: post.data.id });
   return post.data as TPost;
 };
 const addComment = async (
@@ -202,6 +344,7 @@ const addComment = async (
   response: Response,
   text: string,
   post_id: string,
+
   parent_comment_id: string | null,
   user_id: string
 ) => {
@@ -229,13 +372,18 @@ const addComment = async (
 export {
   supabase,
   getPosts,
+  getPostById,
   addPost,
   getPostsByUserId,
+  getCommentsByPostId,
+  getComments,
   getImage,
   getAvatar,
   followUser,
   unfollowUser,
   isFollowing,
   addComment,
-  getPostById,
+  likePost,
+  hasLikedPost,
+  unLikePost,
 };
