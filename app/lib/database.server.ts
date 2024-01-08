@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/auth-helpers-remix";
-import type { TComment, TComments, TPost, TPostData, TUser } from "./../types";
-import { PostgrestError } from "@supabase/supabase-js";
+import type { TComments, TPost, TPostData, TUser } from "./../types";
+import type { PostgrestError } from "@supabase/supabase-js";
 import { getUserById } from "./auth.server";
 
 const supabaseUrl = process.env.SUPABASE_URL!;
@@ -221,27 +221,6 @@ const hasLikedPost = async (
     .eq("user_id", user_id)
     .eq("post_id", liked_post_id);
   return isPostLiked.data && isPostLiked.data.length > 0;
-};
-const getPostById = async (
-  request: Request,
-  response: Response,
-  id: string
-) => {
-  const { data, error } = await supabase(request, response)
-    .from("posts")
-    .select(
-      `id, title, image_name, image_bucket_id, created_at, user:users!inner(id, username), comments:post_comment(comment:comments!post_comment_comment_id_fkey(id,text,created_at),parent_comment:comments!post_comment_parent_comment_id_fkey(id,text,created_at), user:users!post_comment_user_id_fkey(id, username))`
-    )
-    .eq("id", id)
-    .single();
-  if (error) {
-    console.error("postId err", error);
-    return null;
-  }
-  const { image_name, image_bucket_id, ...post } = data;
-  const image = getImage(request, response, image_bucket_id, image_name).data
-    .publicUrl;
-  return { ...post, image };
 };
 const followUser = async (
   request: Request,
