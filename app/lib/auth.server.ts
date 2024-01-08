@@ -149,7 +149,9 @@ const signUp = async (
         avatar_bucket_id: "avatars",
         avatar_name: uploadedAvatar.data.path,
       },
-      emailRedirectTo: "http://localhost:3000/login?email_confirmed=true",
+      emailRedirectTo:
+        (process.env.NEXT_PUBLIC_VERCEL_URL ?? "http://localhost:3000/") +
+        "login?email_confirmed=true",
     },
   });
   if (error) {

@@ -13,7 +13,7 @@ import {
   unfollowUser,
 } from "~/lib/database.server";
 import cn from "classnames";
-import { TPost } from "~/types";
+import type { TPost } from "~/types";
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { username } = params;
   const response = new Response();

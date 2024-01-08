@@ -60,7 +60,7 @@ export default function Index() {
         <input name="title" />
         <button>Add Post</button>
       </Form>
-      <div className="grid max-w-lg mx-auto">
+      <div className="grid max-w-xl mx-auto">
         {posts &&
           posts.map((post) => {
             if (post?.user)

@@ -7,25 +7,17 @@ import type { TPost } from "~/types";
 import { ImageComponent } from ".";
 import { Form } from "@remix-run/react";
 import { useState } from "react";
-export function Card({
-  post,
-
-  profilePage,
-}: {
-  post: TPost;
-
-  profilePage?: boolean;
-}) {
+export function Card({ post }: { post: TPost }) {
   const [showComments, setShowComments] = useState(false);
   return (
-    <div className=" aspect-[4/5] max-w-sm rounded-sm border text-base-content  border-neutral  ">
+    <div className="card lg:card-side max-w-lg  lg:max-w-2xl lg:max-h-[600px] bg-base-100 shadow-xl card-compact ">
       <ImageComponent
         src={post.image}
-        className="w-full h-full"
+        className="w-full h-full max-w-[256px] lg:max-w-[336px]"
         alt={post.title}
       />
-      <div className="mx-2">
-        <section className="flex gap-2 my-1 text-neutral-content">
+      <div className="card-body">
+        <section className="card-title flex gap-2 my-1 text-neutral-content">
           <HeartIcon className="w-8 h-8" />
           <Form method="post">
             <button name="_action" value="comment">
@@ -36,12 +28,12 @@ export function Card({
           <PaperAirplaneIcon className="w-8 h-8" />
         </section>
 
-        {!profilePage && (
-          <p className="text-lg font-semibold">
+        <p>
+          <span className="text-lg font-semibold mr-1">
             {post?.user && post.user[0].username}
-          </p>
-        )}
-        <p>{post.title}</p>
+          </span>
+          {post.title}
+        </p>
         <div>
           <button onClick={() => setShowComments(true)}>
             Show Comments...

@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const ImageComponent = ({
   className,
@@ -11,7 +11,15 @@ export const ImageComponent = ({
   alt: string;
 }) => {
   const [hasLoaded, setHasLoaded] = useState(false);
-
+  const [imgSrc, setImgSrc] = useState(src);
+  useEffect(() => {
+    const img = new Image();
+    img.src = src;
+    img.onload = () => {
+      setImgSrc(src);
+      setHasLoaded(true);
+    };
+  }, [src]);
   return (
     <div className={className}>
       {!hasLoaded && (
@@ -28,12 +36,11 @@ export const ImageComponent = ({
         </div>
       )}
       <img
-        src={src}
+        src={imgSrc}
         className={classNames(
-          { "h-full w-full object-cover": true },
+          { "h-full w-full object-cover aspect-[4/5]": true },
           { hidden: !hasLoaded }
         )}
-        onLoad={() => setHasLoaded(true)}
         alt={alt}
       />
     </div>

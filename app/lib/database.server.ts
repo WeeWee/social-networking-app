@@ -16,17 +16,27 @@ const getPosts = async (request: Request, response: Response) => {
   }
   const postsWithImages = await Promise.all(
     data.map(async (post: TPostData) => {
-      const image = getImage(request, response, post);
+      const image = getImage(
+        request,
+        response,
+        post.image_bucket_id,
+        post.image_name
+      );
 
       return { ...post, image: image.data.publicUrl };
     })
   );
   return postsWithImages as TPost[];
 };
-const getImage = (request: Request, response: Response, post: TPostData) => {
+const getImage = (
+  request: Request,
+  response: Response,
+  image_bucket_id: string,
+  image_name: string
+) => {
   return supabase(request, response)
-    .storage.from(post.image_bucket_id)
-    .getPublicUrl(post.image_name);
+    .storage.from(image_bucket_id)
+    .getPublicUrl(image_name);
 };
 const getAvatar = (request: Request, response: Response, user: TUser) => {
   return supabase(request, response)
@@ -53,7 +63,12 @@ const getPostsByUserId = async (
   const postsWithImages = await Promise.all(
     // @ts-ignore
     data.map(async (post: TPostData) => {
-      const image = getImage(request, response, post);
+      const image = getImage(
+        request,
+        response,
+        post.image_bucket_id,
+        post.image_name
+      );
       const { created_at, image_bucket_id, image_name, ...restPost } = post;
 
       console.log(post.comments);
@@ -62,6 +77,27 @@ const getPostsByUserId = async (
   );
 
   return postsWithImages;
+};
+const getPostById = async (
+  request: Request,
+  response: Response,
+  id: string
+) => {
+  const { data, error } = await supabase(request, response)
+    .from("posts")
+    .select(
+      `id, title, image_name, image_bucket_id, created_at, user:users!inner(id, username), comments:post_comment(comment:comments!post_comment_comment_id_fkey(id,text,created_at),parent_comment:comments!post_comment_parent_comment_id_fkey(id,text,created_at), user:users!post_comment_user_id_fkey(id, username))`
+    )
+    .eq("id", id)
+    .single();
+  if (error) {
+    console.error("postId err", error);
+    return null;
+  }
+  const { image_name, image_bucket_id, ...post } = data;
+  const image = getImage(request, response, image_bucket_id, image_name).data
+    .publicUrl;
+  return { ...post, image };
 };
 const followUser = async (
   request: Request,
@@ -201,4 +237,5 @@ export {
   unfollowUser,
   isFollowing,
   addComment,
+  getPostById,
 };
