@@ -13,7 +13,12 @@ export const AddCommentInput = forwardRef<
 	}
 >(({ commentInput, setCommentInput, parentId, post_id, comments }, ref) => {
 	return (
-		<Form onSubmit={() => setCommentInput("")} method="post" className="flex">
+		<Form
+			onSubmit={() => setCommentInput("")}
+			method="post"
+			encType="multipart/form-data"
+			className="flex"
+		>
 			<input type="hidden" name="parent_id" value={parentId} />
 			<input
 				ref={ref}

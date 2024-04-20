@@ -1,10 +1,34 @@
 import cn from "classnames";
 type InputComponentProps = {
-  classname?: string;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "classname">;
+	className?: string;
+	icon?: React.ReactNode;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "className">;
 export const InputComponent = ({
-  classname,
-  ...props
+	className,
+	icon,
+	...props
 }: InputComponentProps) => {
-  return <input className={cn("border rounded-sm", classname)} {...props} />;
+	return (
+		<label
+			className={cn(
+				{
+					"input input-bordered  flex items-center gap-2":
+						props.type !== "hidden" && props.type !== "file",
+				},
+				props.type !== "file" && className
+			)}
+		>
+			{icon}
+			<input
+				{...props}
+				className={cn(
+					{
+						grow: props.type !== "hidden" && props.type !== "file",
+						"file-input file-input-bordered w-full": props.type === "file",
+					},
+					props.type === "file" && className
+				)}
+			/>
+		</label>
+	);
 };
