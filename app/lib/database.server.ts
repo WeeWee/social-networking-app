@@ -180,14 +180,14 @@ const getCommentsByPostId = async (
 	const { data, error } = (await supabase(request, response)
 		.from("post_comment")
 		.select(
-			"comment:comments!post_comment_comment_id_fkey(id,text,created_at), parent_comment:comments!post_comment_parent_comment_id_fkey(id, text, created_at), user:users!post_comment_user_id_fkey(id, username, avatar_name, avatar_bucket_id)"
+			"comment:comments!post_comment_comment_id_fkey(id,text,created_at), parent_comment:comments!post_comment_parent_comment_id_fkey(id, text, created_at), user:users!public_post_comment_user_id_fkey(id, username, avatar_name, avatar_bucket_id)"
 		)
 		.eq("post_id", post_id)) as {
 		data: TComments[] | null;
 		error: PostgrestError | null;
 	};
 	if (error) {
-		console.error(error);
+		console.error("comments post id", error);
 		return null;
 	}
 	const commentsWithAvatar = await Promise.all(
