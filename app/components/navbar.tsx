@@ -18,8 +18,8 @@ export function Navbar({ user }: { user: TUser }) {
 	return (
 		<nav className="navbar rounded-md bg-secondary ">
 			<div className="flex-1">
-				<Link to="/" className="btn btn-ghost normal-case text-xl">
-					@Connect
+				<Link to="/" className="btn btn-circle btn-ghost normal-case text-xl">
+					<img src="/icon.png" alt="@Connect logotype" width={46} height={46} />
 				</Link>
 			</div>
 			<div className="flex-none gap-2">

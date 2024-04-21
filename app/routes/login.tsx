@@ -1,4 +1,8 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type {
+	ActionFunctionArgs,
+	LoaderFunctionArgs,
+	MetaFunction,
+} from "@remix-run/node";
 import { useActionData, useLoaderData } from "@remix-run/react";
 import {
 	Button,
@@ -7,13 +11,23 @@ import {
 	InputComponent,
 } from "~/components";
 import { LoginOAuth, LoginWPassword } from "~/lib/auth.server";
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	return [
+		{
+			title: "@Connect | Login to view posts",
+		},
+		{
+			name: "description",
+			content: "Welcome to @Connect, a social media platform built for you.",
+		},
+	];
+};
 export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData();
 	const _action = formData.get("_action");
 	const response = new Response();
 
 	if (_action === "email") {
-		console.log("email action");
 		return await LoginWPassword(
 			request,
 			response,
@@ -22,7 +36,6 @@ export async function action({ request }: ActionFunctionArgs) {
 		);
 	}
 	if (_action === "google") {
-		console.log("google action");
 		return await LoginOAuth(request, response, "google");
 	}
 }

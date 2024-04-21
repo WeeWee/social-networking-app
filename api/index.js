@@ -146,7 +146,7 @@ __export(root_exports, {
 var import_node3 = require("@remix-run/node"), import_react16 = require("@remix-run/react");
 
 // app/tailwind.css
-var tailwind_default = "/build/_assets/tailwind-IVIUW2NE.css";
+var tailwind_default = "/build/_assets/tailwind-HEMOQNST.css";
 
 // app/components/card.tsx
 var import_outline = require("@heroicons/react/24/outline"), import_solid = require("@heroicons/react/24/solid");
@@ -161,29 +161,34 @@ function Card({
 }) {
   let currentPostComments = comments.filter(
     (comment2) => comment2.post_id === post.id
-  ), [comment, setComment] = (0, import_react3.useState)(""), commentInputRef = (0, import_react3.useRef)(null);
-  return /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("div", { className: "mx-auto my-1 aspect-[4/5] max-w-sm rounded-sm  text-base-content", children: [
+  ), [comment, setComment] = (0, import_react3.useState)(""), commentInputRef = (0, import_react3.useRef)(null), fetcher = (0, import_react2.useFetcher)(), liked = fetcher.formData ? fetcher.formData.get("liked") === "1" : !!post.likes.find((like) => like.user.id === currentUser.id), [likesLength, setLikesLength] = (0, import_react3.useState)(post.likes.length);
+  return (0, import_react3.useEffect)(() => {
+    if (fetcher.formData) {
+      let formLiked = fetcher.formData.get("liked");
+      formLiked === "1" ? setLikesLength((prev) => prev + 1) : formLiked === "0" && setLikesLength((prev) => prev - 1);
+    }
+  }, [fetcher.formData]), /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("div", { className: "mx-auto my-1 aspect-[4/5] max-w-sm rounded-sm  text-base-content", children: [
     /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("div", { className: "flex gap-2 my-2 items-center", children: [
       /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_react2.Link, { to: `/user/${post.user?.username}`, className: "avatar", children: /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("div", { className: "w-9 h-9 rounded-full ring ring-primary ring-offset-base-100 ring-offset-1", children: /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("img", { src: post.user?.avatar, alt: "" }, void 0, !1, {
         fileName: "app/components/card.tsx",
-        lineNumber: 38,
+        lineNumber: 56,
         columnNumber: 7
       }, this) }, void 0, !1, {
         fileName: "app/components/card.tsx",
-        lineNumber: 37,
+        lineNumber: 55,
         columnNumber: 6
       }, this) }, void 0, !1, {
         fileName: "app/components/card.tsx",
-        lineNumber: 36,
+        lineNumber: 54,
         columnNumber: 5
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_react2.Link, { to: `/user/${post.user?.username}`, children: /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("p", { children: post.user?.username }, void 0, !1, {
         fileName: "app/components/card.tsx",
-        lineNumber: 42,
+        lineNumber: 60,
         columnNumber: 6
       }, this) }, void 0, !1, {
         fileName: "app/components/card.tsx",
-        lineNumber: 41,
+        lineNumber: 59,
         columnNumber: 5
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(
@@ -196,7 +201,7 @@ function Card({
             "w"
           ] }, void 0, !0, {
             fileName: "app/components/card.tsx",
-            lineNumber: 48,
+            lineNumber: 66,
             columnNumber: 6
           }, this)
         },
@@ -204,14 +209,14 @@ function Card({
         !1,
         {
           fileName: "app/components/card.tsx",
-          lineNumber: 44,
+          lineNumber: 62,
           columnNumber: 5
         },
         this
       )
     ] }, void 0, !0, {
       fileName: "app/components/card.tsx",
-      lineNumber: 35,
+      lineNumber: 53,
       columnNumber: 4
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(
@@ -225,7 +230,7 @@ function Card({
       !1,
       {
         fileName: "app/components/card.tsx",
-        lineNumber: 54,
+        lineNumber: 72,
         columnNumber: 4
       },
       this
@@ -233,28 +238,33 @@ function Card({
     /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("div", { className: " pb-4 border-b border-b-neutral", children: /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("div", { className: "", children: [
       /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("section", { className: "flex gap-2 items-center my-1 text-neutral-content", children: [
         /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(
-          import_react2.Form,
+          fetcher.Form,
           {
             method: "post",
             encType: "multipart/form-data",
             className: "flex items-center",
             children: [
-              /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("input", { type: "hidden", name: "post_id", value: post.id }, void 0, !1, {
+              /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("input", { type: "hidden", name: "liked", value: liked ? "0" : "1" }, void 0, !1, {
                 fileName: "app/components/card.tsx",
-                lineNumber: 68,
+                lineNumber: 86,
                 columnNumber: 8
               }, this),
-              /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("button", { name: "_action", value: "like", children: post.likes.find((like) => like.user.id === currentUser.id) ? /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_solid.HeartIcon, { className: "w-7 h-7" }, void 0, !1, {
+              /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("input", { type: "hidden", name: "post_id", value: post.id }, void 0, !1, {
                 fileName: "app/components/card.tsx",
-                lineNumber: 71,
+                lineNumber: 87,
+                columnNumber: 8
+              }, this),
+              /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("button", { name: "_action", value: "like", children: liked ? /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_solid.HeartIcon, { className: "w-7 h-7" }, void 0, !1, {
+                fileName: "app/components/card.tsx",
+                lineNumber: 90,
                 columnNumber: 10
               }, this) : /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_outline.HeartIcon, { className: "w-7 h-7" }, void 0, !1, {
                 fileName: "app/components/card.tsx",
-                lineNumber: 73,
+                lineNumber: 92,
                 columnNumber: 10
               }, this) }, void 0, !1, {
                 fileName: "app/components/card.tsx",
-                lineNumber: 69,
+                lineNumber: 88,
                 columnNumber: 8
               }, this)
             ]
@@ -263,52 +273,52 @@ function Card({
           !0,
           {
             fileName: "app/components/card.tsx",
-            lineNumber: 63,
+            lineNumber: 81,
             columnNumber: 7
           },
           this
         ),
         /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("button", { onClick: () => commentInputRef.current?.focus(), children: /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_outline.ChatBubbleOvalLeftIcon, { className: "w-7 h-7" }, void 0, !1, {
           fileName: "app/components/card.tsx",
-          lineNumber: 78,
+          lineNumber: 97,
           columnNumber: 8
         }, this) }, void 0, !1, {
           fileName: "app/components/card.tsx",
-          lineNumber: 77,
+          lineNumber: 96,
           columnNumber: 7
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_outline.PaperAirplaneIcon, { className: "w-7 h-7" }, void 0, !1, {
           fileName: "app/components/card.tsx",
-          lineNumber: 80,
+          lineNumber: 99,
           columnNumber: 7
         }, this)
       ] }, void 0, !0, {
         fileName: "app/components/card.tsx",
-        lineNumber: 62,
+        lineNumber: 80,
         columnNumber: 6
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("p", { className: "text-sm font-semibold", children: [
-        post.likes.length,
+        likesLength,
         " likes"
       ] }, void 0, !0, {
         fileName: "app/components/card.tsx",
-        lineNumber: 83,
+        lineNumber: 102,
         columnNumber: 6
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("div", { className: "flex gap-1", children: [
         /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_react2.Link, { to: `/user/${post.user?.username}`, className: "font-semibold", children: post.user?.username }, void 0, !1, {
           fileName: "app/components/card.tsx",
-          lineNumber: 85,
+          lineNumber: 104,
           columnNumber: 7
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("p", { children: post.title }, void 0, !1, {
           fileName: "app/components/card.tsx",
-          lineNumber: 88,
+          lineNumber: 107,
           columnNumber: 7
         }, this)
       ] }, void 0, !0, {
         fileName: "app/components/card.tsx",
-        lineNumber: 84,
+        lineNumber: 103,
         columnNumber: 6
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_react2.Link, { to: `/post/${post.id}`, className: "text-sm text-gray-400", children: [
@@ -317,7 +327,7 @@ function Card({
         " comments"
       ] }, void 0, !0, {
         fileName: "app/components/card.tsx",
-        lineNumber: 90,
+        lineNumber: 109,
         columnNumber: 6
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("div", { className: "flex gap-1", children: [
@@ -332,19 +342,19 @@ function Card({
           !1,
           {
             fileName: "app/components/card.tsx",
-            lineNumber: 94,
+            lineNumber: 113,
             columnNumber: 7
           },
           this
         ),
         /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("p", { children: currentPostComments[comments.length - 1]?.comment.text }, void 0, !1, {
           fileName: "app/components/card.tsx",
-          lineNumber: 102,
+          lineNumber: 121,
           columnNumber: 7
         }, this)
       ] }, void 0, !0, {
         fileName: "app/components/card.tsx",
-        lineNumber: 93,
+        lineNumber: 112,
         columnNumber: 6
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(
@@ -361,23 +371,23 @@ function Card({
         !1,
         {
           fileName: "app/components/card.tsx",
-          lineNumber: 104,
+          lineNumber: 123,
           columnNumber: 6
         },
         this
       )
     ] }, void 0, !0, {
       fileName: "app/components/card.tsx",
-      lineNumber: 61,
+      lineNumber: 79,
       columnNumber: 5
     }, this) }, void 0, !1, {
       fileName: "app/components/card.tsx",
-      lineNumber: 60,
+      lineNumber: 78,
       columnNumber: 4
     }, this)
   ] }, void 0, !0, {
     fileName: "app/components/card.tsx",
-    lineNumber: 34,
+    lineNumber: 52,
     columnNumber: 3
   }, this);
 }
@@ -467,7 +477,11 @@ function Navbar({ user }) {
   return (0, import_react5.useEffect)(() => {
     addPostRef.current?.reset();
   }, [addingPost]), /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("nav", { className: "navbar rounded-md bg-secondary ", children: [
-    /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("div", { className: "flex-1", children: /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react4.Link, { to: "/", className: "btn btn-ghost normal-case text-xl", children: "@Connect" }, void 0, !1, {
+    /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("div", { className: "flex-1", children: /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react4.Link, { to: "/", className: "btn btn-circle btn-ghost normal-case text-xl", children: /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("img", { src: "/icon.png", alt: "@Connect logotype", width: 46, height: 46 }, void 0, !1, {
+      fileName: "app/components/navbar.tsx",
+      lineNumber: 22,
+      columnNumber: 6
+    }, this) }, void 0, !1, {
       fileName: "app/components/navbar.tsx",
       lineNumber: 21,
       columnNumber: 5
@@ -904,70 +918,70 @@ function PostCard({
 // app/components/comment.tsx
 var import_react9 = require("@remix-run/react"), import_dayjs2 = __toESM(require("dayjs")), import_jsx_dev_runtime10 = require("react/jsx-dev-runtime");
 function Comment({
-  comment,
+  data,
   children,
   setComment,
   setParentId,
   isReply
 }) {
-  let splitComment = "", username = "", newComment = comment.comment.text;
-  return isReply && (splitComment = comment.comment.text.split(" ")[0], newComment = comment.comment.text.replace(splitComment, ""), newComment.trimStart(), username = splitComment.replace("@", "")), /* @__PURE__ */ (0, import_jsx_dev_runtime10.jsxDEV)("div", { className: "my-2", children: [
+  let splitComment = "", username = "", newComment = data.comment.text;
+  return newComment.includes("@") && (newComment.trimStart(), splitComment = data.comment.text.split(" ")[0], newComment = data.comment.text.replace(splitComment, ""), newComment.trimStart(), username = splitComment.replace("@", "")), /* @__PURE__ */ (0, import_jsx_dev_runtime10.jsxDEV)("div", { className: "my-2", children: [
     /* @__PURE__ */ (0, import_jsx_dev_runtime10.jsxDEV)("div", { className: "flex  items-center justify-center gap-1", children: [
-      /* @__PURE__ */ (0, import_jsx_dev_runtime10.jsxDEV)(import_react9.Link, { to: `/user/${comment.user.username}`, children: /* @__PURE__ */ (0, import_jsx_dev_runtime10.jsxDEV)(
+      /* @__PURE__ */ (0, import_jsx_dev_runtime10.jsxDEV)(import_react9.Link, { to: `/user/${data.user.username}`, children: /* @__PURE__ */ (0, import_jsx_dev_runtime10.jsxDEV)(
         "img",
         {
           className: "w-8 h-8 rounded-full object-cover",
-          src: comment.user.avatar
+          src: data.user.avatar
         },
         void 0,
         !1,
         {
           fileName: "app/components/comment.tsx",
-          lineNumber: 32,
+          lineNumber: 36,
           columnNumber: 6
         },
         this
       ) }, void 0, !1, {
         fileName: "app/components/comment.tsx",
-        lineNumber: 31,
+        lineNumber: 35,
         columnNumber: 5
       }, this),
-      /* @__PURE__ */ (0, import_jsx_dev_runtime10.jsxDEV)("p", { className: " inline-block max-w-fit", children: comment.user.username }, void 0, !1, {
+      /* @__PURE__ */ (0, import_jsx_dev_runtime10.jsxDEV)("p", { className: " inline-block max-w-fit", children: data.user.username }, void 0, !1, {
         fileName: "app/components/comment.tsx",
-        lineNumber: 37,
+        lineNumber: 41,
         columnNumber: 5
       }, this),
-      /* @__PURE__ */ (0, import_jsx_dev_runtime10.jsxDEV)("p", { className: "text-sm text-gray-500", children: (0, import_dayjs2.default)(comment.comment.created_at).fromNow() }, void 0, !1, {
+      /* @__PURE__ */ (0, import_jsx_dev_runtime10.jsxDEV)("p", { className: "text-sm text-gray-500", children: (0, import_dayjs2.default)(data.comment.created_at).fromNow() }, void 0, !1, {
         fileName: "app/components/comment.tsx",
-        lineNumber: 38,
+        lineNumber: 42,
         columnNumber: 5
       }, this)
     ] }, void 0, !0, {
       fileName: "app/components/comment.tsx",
-      lineNumber: 30,
+      lineNumber: 34,
       columnNumber: 4
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime10.jsxDEV)("div", { className: "ml-9 text-sm flex gap-1", children: [
-      isReply && /* @__PURE__ */ (0, import_jsx_dev_runtime10.jsxDEV)(import_react9.Link, { className: "font-semibold", to: `/user/${username}`, children: splitComment }, void 0, !1, {
+      username && /* @__PURE__ */ (0, import_jsx_dev_runtime10.jsxDEV)(import_react9.Link, { className: "font-semibold", to: `/user/${username}`, children: splitComment }, void 0, !1, {
         fileName: "app/components/comment.tsx",
-        lineNumber: 44,
+        lineNumber: 48,
         columnNumber: 6
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime10.jsxDEV)("p", { children: newComment }, void 0, !1, {
         fileName: "app/components/comment.tsx",
-        lineNumber: 48,
+        lineNumber: 52,
         columnNumber: 5
       }, this)
     ] }, void 0, !0, {
       fileName: "app/components/comment.tsx",
-      lineNumber: 42,
+      lineNumber: 46,
       columnNumber: 4
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime10.jsxDEV)(
       "button",
       {
         onClick: () => {
-          setComment(`@${comment.user.username}`), setParentId(isReply ? comment.parent_comment.id : comment.comment.id);
+          setComment(`@${data.user.username}`), setParentId(isReply ? data.parent_comment.id : data.comment.id);
         },
         className: "text-sm ",
         children: "reply"
@@ -976,7 +990,7 @@ function Comment({
       !1,
       {
         fileName: "app/components/comment.tsx",
-        lineNumber: 50,
+        lineNumber: 54,
         columnNumber: 4
       },
       this
@@ -984,7 +998,7 @@ function Comment({
     children
   ] }, void 0, !0, {
     fileName: "app/components/comment.tsx",
-    lineNumber: 29,
+    lineNumber: 33,
     columnNumber: 3
   }, this);
 }
@@ -1036,19 +1050,19 @@ function Replies({
         isReply: !0,
         setParentId,
         setComment,
-        comment: reply
+        data: reply
       },
       void 0,
       !1,
       {
         fileName: "app/components/replies.tsx",
-        lineNumber: 44,
+        lineNumber: 42,
         columnNumber: 8
       },
       this
     ) }, reply.comment.id, !1, {
       fileName: "app/components/replies.tsx",
-      lineNumber: 43,
+      lineNumber: 41,
       columnNumber: 7
     }, this))
   ] }, void 0, !0, {
@@ -1072,13 +1086,13 @@ function CommentSection({
       let replies = comments?.filter(
         (child) => comment2.comment.id === child.parent_comment?.id
       );
-      return console.log(replies), /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)("div", { children: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(
+      return /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)("div", { children: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(
         Comment,
         {
           isReply: !1,
           setComment,
           setParentId,
-          comment: comment2,
+          data: comment2,
           children: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(
             Replies,
             {
@@ -1090,7 +1104,7 @@ function CommentSection({
             !1,
             {
               fileName: "app/components/comment-section.tsx",
-              lineNumber: 48,
+              lineNumber: 44,
               columnNumber: 10
             },
             this
@@ -1100,13 +1114,13 @@ function CommentSection({
         !1,
         {
           fileName: "app/components/comment-section.tsx",
-          lineNumber: 42,
+          lineNumber: 38,
           columnNumber: 9
         },
         this
       ) }, comment2.comment.id, !1, {
         fileName: "app/components/comment-section.tsx",
-        lineNumber: 41,
+        lineNumber: 37,
         columnNumber: 8
       }, this);
     }) }, void 0, !1, {
@@ -1119,44 +1133,44 @@ function CommentSection({
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_react11.Form, { method: "post", className: "w-7 h-7", children: [
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)("input", { type: "hidden", name: "post_id", value: post.id }, void 0, !1, {
             fileName: "app/components/comment-section.tsx",
-            lineNumber: 61,
+            lineNumber: 57,
             columnNumber: 7
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)("button", { name: "_action", value: "like", children: post.likes.find((like) => like.user.id === currentUser.id) ? /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_solid3.HeartIcon, { className: "w-7 h-7" }, void 0, !1, {
             fileName: "app/components/comment-section.tsx",
-            lineNumber: 64,
-            columnNumber: 10
+            lineNumber: 60,
+            columnNumber: 9
           }, this) : /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_outline2.HeartIcon, { className: "w-7 h-7" }, void 0, !1, {
             fileName: "app/components/comment-section.tsx",
-            lineNumber: 66,
-            columnNumber: 10
+            lineNumber: 62,
+            columnNumber: 9
           }, this) }, void 0, !1, {
             fileName: "app/components/comment-section.tsx",
-            lineNumber: 62,
+            lineNumber: 58,
             columnNumber: 7
           }, this)
         ] }, void 0, !0, {
           fileName: "app/components/comment-section.tsx",
-          lineNumber: 60,
+          lineNumber: 56,
           columnNumber: 6
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)("button", { onClick: () => commentInputRef.current?.focus(), children: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_outline2.ChatBubbleOvalLeftIcon, { className: "w-7 h-7" }, void 0, !1, {
           fileName: "app/components/comment-section.tsx",
-          lineNumber: 72,
+          lineNumber: 68,
           columnNumber: 7
         }, this) }, void 0, !1, {
           fileName: "app/components/comment-section.tsx",
-          lineNumber: 71,
+          lineNumber: 67,
           columnNumber: 6
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_outline2.PaperAirplaneIcon, { className: "w-7 h-7" }, void 0, !1, {
           fileName: "app/components/comment-section.tsx",
-          lineNumber: 75,
+          lineNumber: 71,
           columnNumber: 6
         }, this)
       ] }, void 0, !0, {
         fileName: "app/components/comment-section.tsx",
-        lineNumber: 59,
+        lineNumber: 55,
         columnNumber: 5
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)("p", { children: [
@@ -1164,12 +1178,12 @@ function CommentSection({
         " likes"
       ] }, void 0, !0, {
         fileName: "app/components/comment-section.tsx",
-        lineNumber: 77,
+        lineNumber: 73,
         columnNumber: 5
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)("p", { className: "text-xs", children: (0, import_dayjs3.default)().diff(post.created_at, "week") > 0 ? (0, import_dayjs3.default)(post.created_at).format("[the] DD MMMM") : (0, import_dayjs3.default)(post.created_at).fromNow() }, void 0, !1, {
         fileName: "app/components/comment-section.tsx",
-        lineNumber: 78,
+        lineNumber: 74,
         columnNumber: 5
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)("div", { className: "mt-6 flex gap-2", children: [
@@ -1184,7 +1198,7 @@ function CommentSection({
           !1,
           {
             fileName: "app/components/comment-section.tsx",
-            lineNumber: 84,
+            lineNumber: 80,
             columnNumber: 6
           },
           this
@@ -1203,19 +1217,19 @@ function CommentSection({
           !1,
           {
             fileName: "app/components/comment-section.tsx",
-            lineNumber: 89,
+            lineNumber: 85,
             columnNumber: 6
           },
           this
         )
       ] }, void 0, !0, {
         fileName: "app/components/comment-section.tsx",
-        lineNumber: 83,
+        lineNumber: 79,
         columnNumber: 5
       }, this)
     ] }, void 0, !0, {
       fileName: "app/components/comment-section.tsx",
-      lineNumber: 58,
+      lineNumber: 54,
       columnNumber: 4
     }, this)
   ] }, void 0, !0, {
@@ -1444,20 +1458,17 @@ var supabaseUrl = process.env.SUPABASE_URL, supabaseKey = process.env.SUPABASE_A
     );
     return isFollowedA && !isFollowedB ? -1 : !isFollowedA && isFollowedB ? 1 : b?.created_at?.localeCompare(a?.created_at) || 0;
   });
-  if (followedUsersError)
-    return console.error(followedUsersError), null;
-  let postsWithImages = await Promise.all(
+  return followedUsersError ? (console.error(followedUsersError), null) : await Promise.all(
     filteredPosts.map(async (post) => {
       let image = getImage(request, response, post), avatar = getAvatar(request, response, post.user), { avatar_name, avatar_bucket_id, ...restUser } = post.user, newUser = { avatar: avatar.data.publicUrl, ...restUser }, { image_name, image_bucket_id, user, ...restPost } = post;
       return { user: newUser, image: image.data.publicUrl, ...restPost };
     })
   );
-  return console.log(postsWithImages[0].likes), postsWithImages;
 }, getImage = (request, response, post) => supabase(request, response).storage.from(post.image_bucket_id).getPublicUrl(post.image_name), getAvatar = (request, response, user) => supabase(request, response).storage.from(user.avatar_bucket_id).getPublicUrl(user.avatar_name), getComments = async (request, response) => {
   let { data, error } = await supabase(request, response).from("post_comment").select(
-    "post_id, comment:comments!post_comment_comment_id_fkey(id,text,created_at), parent_comment:comments!post_comment_parent_comment_id_fkey(id, text, created_at), user:users!post_comment_user_id_fkey(id, username, avatar_name, avatar_bucket_id)"
+    "post_id, comment:comments!post_comment_comment_id_fkey(id,text,created_at), parent_comment:comments!post_comment_parent_comment_id_fkey(id, text, created_at), user:users!public_post_comment_user_id_fkey(id, username, avatar_name, avatar_bucket_id)"
   );
-  return console.log(data), error ? (console.error("get comments ", error), []) : await Promise.all(
+  return error ? (console.error("get comments ", error), []) : await Promise.all(
     // @ts-ignore
     data.map(async (comment) => {
       let userAvatar = getAvatar(request, response, comment.user), { avatar_bucket_id, avatar_name, ...restUser } = comment.user;
@@ -1754,14 +1765,22 @@ var user_username_exports = {};
 __export(user_username_exports, {
   action: () => action,
   default: () => User,
-  loader: () => loader2
+  loader: () => loader2,
+  meta: () => meta
 });
 var import_node4 = require("@remix-run/node"), import_react17 = require("@remix-run/react");
-var import_classnames5 = __toESM(require("classnames")), import_jsx_dev_runtime16 = require("react/jsx-dev-runtime"), loader2 = async ({ request, params }) => {
+var import_classnames5 = __toESM(require("classnames")), import_jsx_dev_runtime16 = require("react/jsx-dev-runtime"), meta = ({ data }) => [
+  {
+    title: data?.user ? `@Connect | ${data.user.username}` : "@Connect | User not found"
+  },
+  {
+    name: "description",
+    content: "Welcome to @Connect, a social media platform built for you."
+  }
+], loader2 = async ({ request, params }) => {
   let { username } = params, response = new Response(), currentUser = await getUser(request, response);
   if (!currentUser?.user)
     return (0, import_node4.redirect)("/login");
-  console.log(username);
   let userData = await getUserByUsername(request, response, username), is_following = await isFollowing(
     request,
     response,
@@ -1779,7 +1798,7 @@ var import_classnames5 = __toESM(require("classnames")), import_jsx_dev_runtime1
   );
 }, action = async ({ request, params }) => {
   let { username } = params, response = new Response(), currentUser = await getUser(request, response), userToFollow = await getUserByUsername(request, response, username), formData = await request.formData(), _action = formData.get("_action");
-  return console.log(_action), _action === "follow" && await followUser(
+  return _action === "follow" && await followUser(
     request,
     response,
     currentUser?.user.id,
@@ -1814,82 +1833,82 @@ function User() {
         !1,
         {
           fileName: "app/routes/user.$username.tsx",
-          lineNumber: 85,
+          lineNumber: 97,
           columnNumber: 6
         },
         this
       ) : /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("div", { className: "avatar placeholder", children: /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("div", { className: "bg-neutral-focus text-neutral-content rounded-full w-32 ", children: /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("span", { className: "text-4xl capitalize", children: user?.username?.charAt(0) }, void 0, !1, {
         fileName: "app/routes/user.$username.tsx",
-        lineNumber: 94,
+        lineNumber: 106,
         columnNumber: 8
       }, this) }, void 0, !1, {
         fileName: "app/routes/user.$username.tsx",
-        lineNumber: 93,
+        lineNumber: 105,
         columnNumber: 7
       }, this) }, void 0, !1, {
         fileName: "app/routes/user.$username.tsx",
-        lineNumber: 92,
+        lineNumber: 104,
         columnNumber: 6
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("div", { className: "flex flex-col gap-4", children: [
         /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("div", { className: "flex gap-4 items-center text-center", children: [
           /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("h1", { className: "text-2xl ", children: user?.username }, void 0, !1, {
             fileName: "app/routes/user.$username.tsx",
-            lineNumber: 102,
+            lineNumber: 114,
             columnNumber: 7
           }, this),
           currentUser?.id === user?.id && /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("button", { className: "btn btn-outline btn-sm", children: "Edit Profile" }, void 0, !1, {
             fileName: "app/routes/user.$username.tsx",
-            lineNumber: 104,
+            lineNumber: 116,
             columnNumber: 8
           }, this)
         ] }, void 0, !0, {
           fileName: "app/routes/user.$username.tsx",
-          lineNumber: 101,
+          lineNumber: 113,
           columnNumber: 6
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("div", { className: "flex gap-4", children: [
           /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("p", { children: [
             /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("span", { className: "font-semibold", children: posts?.length }, void 0, !1, {
               fileName: "app/routes/user.$username.tsx",
-              lineNumber: 109,
+              lineNumber: 121,
               columnNumber: 8
             }, this),
             " posts"
           ] }, void 0, !0, {
             fileName: "app/routes/user.$username.tsx",
-            lineNumber: 108,
+            lineNumber: 120,
             columnNumber: 7
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("p", { children: [
             /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("span", { className: "font-semibold", children: user?.followers?.length }, void 0, !1, {
               fileName: "app/routes/user.$username.tsx",
-              lineNumber: 112,
+              lineNumber: 124,
               columnNumber: 8
             }, this),
             " ",
             "followers"
           ] }, void 0, !0, {
             fileName: "app/routes/user.$username.tsx",
-            lineNumber: 111,
+            lineNumber: 123,
             columnNumber: 7
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("p", { children: [
             /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("span", { className: "font-semibold", children: user?.following.length }, void 0, !1, {
               fileName: "app/routes/user.$username.tsx",
-              lineNumber: 116,
+              lineNumber: 128,
               columnNumber: 8
             }, this),
             " ",
             "following"
           ] }, void 0, !0, {
             fileName: "app/routes/user.$username.tsx",
-            lineNumber: 115,
+            lineNumber: 127,
             columnNumber: 7
           }, this)
         ] }, void 0, !0, {
           fileName: "app/routes/user.$username.tsx",
-          lineNumber: 107,
+          lineNumber: 119,
           columnNumber: 6
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("p", { className: "font-semibold capitalize", children: [
@@ -1898,7 +1917,7 @@ function User() {
           user?.last_name
         ] }, void 0, !0, {
           fileName: "app/routes/user.$username.tsx",
-          lineNumber: 120,
+          lineNumber: 132,
           columnNumber: 6
         }, this),
         currentUser?.id !== user?.id && /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("div", { children: /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)(import_react17.Form, { method: "post", children: /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)(
@@ -1917,54 +1936,54 @@ function User() {
           !1,
           {
             fileName: "app/routes/user.$username.tsx",
-            lineNumber: 126,
+            lineNumber: 138,
             columnNumber: 9
           },
           this
         ) }, void 0, !1, {
           fileName: "app/routes/user.$username.tsx",
-          lineNumber: 125,
+          lineNumber: 137,
           columnNumber: 8
         }, this) }, void 0, !1, {
           fileName: "app/routes/user.$username.tsx",
-          lineNumber: 124,
+          lineNumber: 136,
           columnNumber: 7
         }, this)
       ] }, void 0, !0, {
         fileName: "app/routes/user.$username.tsx",
-        lineNumber: 100,
+        lineNumber: 112,
         columnNumber: 5
       }, this)
     ] }, void 0, !0, {
       fileName: "app/routes/user.$username.tsx",
-      lineNumber: 83,
+      lineNumber: 95,
       columnNumber: 4
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("div", { className: "divider" }, void 0, !1, {
       fileName: "app/routes/user.$username.tsx",
-      lineNumber: 142,
+      lineNumber: 154,
       columnNumber: 4
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("div", { className: "", children: /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("div", { className: " grid grid-cols-3 gap-4 mx-auto", children: posts && user ? posts?.map((post) => /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)(ProfileCard, { post }, post.id, !1, {
       fileName: "app/routes/user.$username.tsx",
-      lineNumber: 147,
+      lineNumber: 159,
       columnNumber: 8
     }, this)) : /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("p", { children: "User could not be found." }, void 0, !1, {
       fileName: "app/routes/user.$username.tsx",
-      lineNumber: 150,
+      lineNumber: 162,
       columnNumber: 7
     }, this) }, void 0, !1, {
       fileName: "app/routes/user.$username.tsx",
-      lineNumber: 144,
+      lineNumber: 156,
       columnNumber: 5
     }, this) }, void 0, !1, {
       fileName: "app/routes/user.$username.tsx",
-      lineNumber: 143,
+      lineNumber: 155,
       columnNumber: 4
     }, this)
   ] }, void 0, !0, {
     fileName: "app/routes/user.$username.tsx",
-    lineNumber: 82,
+    lineNumber: 94,
     columnNumber: 3
   }, this);
 }
@@ -1992,11 +2011,13 @@ __export(post_postid_exports, {
   action: () => action2,
   default: () => Post,
   loader: () => loader4,
-  meta: () => meta
+  meta: () => meta2
 });
 var import_node6 = require("@remix-run/node"), import_react18 = require("@remix-run/react");
-var import_jsx_dev_runtime17 = require("react/jsx-dev-runtime"), meta = () => [
-  { title: "New Remix App" },
+var import_jsx_dev_runtime17 = require("react/jsx-dev-runtime"), meta2 = ({ data }) => [
+  {
+    title: data?.post && data.post.user ? `@Connect | ${data.post.title} by ${data.post.user.username}` : "@Connect | Post not found"
+  },
   { name: "description", content: "Welcome to Remix!" }
 ];
 async function loader4({ request, params }) {
@@ -2058,17 +2079,17 @@ function Post() {
     !1,
     {
       fileName: "app/routes/post.$postid.tsx",
-      lineNumber: 96,
+      lineNumber: 101,
       columnNumber: 5
     },
     this
   ) : /* @__PURE__ */ (0, import_jsx_dev_runtime17.jsxDEV)("h1", { children: "Post could not be found" }, void 0, !1, {
     fileName: "app/routes/post.$postid.tsx",
-    lineNumber: 102,
+    lineNumber: 107,
     columnNumber: 5
   }, this) }, void 0, !1, {
     fileName: "app/routes/post.$postid.tsx",
-    lineNumber: 94,
+    lineNumber: 99,
     columnNumber: 3
   }, this);
 }
@@ -2081,12 +2102,12 @@ __export(logout_exports, {
 });
 var import_jsx_dev_runtime18 = require("react/jsx-dev-runtime"), action3 = async ({ request }) => {
   let response = new Response();
-  return console.log("logout "), await Logout(request, response);
+  return await Logout(request, response);
 };
 function LogoutRoute() {
   return /* @__PURE__ */ (0, import_jsx_dev_runtime18.jsxDEV)("div", {}, void 0, !1, {
     fileName: "app/routes/logout.tsx",
-    lineNumber: 11,
+    lineNumber: 10,
     columnNumber: 9
   }, this);
 }
@@ -2095,10 +2116,19 @@ function LogoutRoute() {
 var signup_exports = {};
 __export(signup_exports, {
   action: () => action4,
-  default: () => Signup
+  default: () => Signup,
+  meta: () => meta3
 });
 var import_react19 = require("@remix-run/react"), import_node7 = require("@remix-run/node");
-var import_jsx_dev_runtime19 = require("react/jsx-dev-runtime");
+var import_jsx_dev_runtime19 = require("react/jsx-dev-runtime"), meta3 = () => [
+  {
+    title: "@Connect | Signup here"
+  },
+  {
+    name: "description",
+    content: "Welcome to @Connect, a social media platform built for you."
+  }
+];
 async function action4({ request }) {
   let uploadHandler = (0, import_node7.unstable_createMemoryUploadHandler)(), formData = await (0, import_node7.unstable_parseMultipartFormData)(
     request,
@@ -2130,7 +2160,7 @@ function Signup() {
       !1,
       {
         fileName: "app/routes/signup.tsx",
-        lineNumber: 39,
+        lineNumber: 51,
         columnNumber: 5
       },
       this
@@ -2147,7 +2177,7 @@ function Signup() {
             className: "w-4 h-4 opacity-70",
             children: /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)("path", { d: "M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" }, void 0, !1, {
               fileName: "app/routes/signup.tsx",
-              lineNumber: 52,
+              lineNumber: 64,
               columnNumber: 8
             }, this)
           },
@@ -2155,7 +2185,7 @@ function Signup() {
           !1,
           {
             fileName: "app/routes/signup.tsx",
-            lineNumber: 46,
+            lineNumber: 58,
             columnNumber: 7
           },
           this
@@ -2167,19 +2197,19 @@ function Signup() {
       !1,
       {
         fileName: "app/routes/signup.tsx",
-        lineNumber: 44,
+        lineNumber: 56,
         columnNumber: 5
       },
       this
     ),
     /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)(InputComponent, { name: "firstname", placeholder: "First name" }, void 0, !1, {
       fileName: "app/routes/signup.tsx",
-      lineNumber: 58,
+      lineNumber: 70,
       columnNumber: 5
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)(InputComponent, { name: "lastname", placeholder: "Last name" }, void 0, !1, {
       fileName: "app/routes/signup.tsx",
-      lineNumber: 59,
+      lineNumber: 71,
       columnNumber: 5
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)(
@@ -2195,12 +2225,12 @@ function Signup() {
             children: [
               /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)("path", { d: "M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" }, void 0, !1, {
                 fileName: "app/routes/signup.tsx",
-                lineNumber: 68,
+                lineNumber: 80,
                 columnNumber: 8
               }, this),
               /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)("path", { d: "M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" }, void 0, !1, {
                 fileName: "app/routes/signup.tsx",
-                lineNumber: 69,
+                lineNumber: 81,
                 columnNumber: 8
               }, this)
             ]
@@ -2209,7 +2239,7 @@ function Signup() {
           !0,
           {
             fileName: "app/routes/signup.tsx",
-            lineNumber: 62,
+            lineNumber: 74,
             columnNumber: 7
           },
           this
@@ -2222,7 +2252,7 @@ function Signup() {
       !1,
       {
         fileName: "app/routes/signup.tsx",
-        lineNumber: 60,
+        lineNumber: 72,
         columnNumber: 5
       },
       this
@@ -2248,7 +2278,7 @@ function Signup() {
               !1,
               {
                 fileName: "app/routes/signup.tsx",
-                lineNumber: 84,
+                lineNumber: 96,
                 columnNumber: 8
               },
               this
@@ -2258,7 +2288,7 @@ function Signup() {
           !1,
           {
             fileName: "app/routes/signup.tsx",
-            lineNumber: 78,
+            lineNumber: 90,
             columnNumber: 7
           },
           this
@@ -2271,7 +2301,7 @@ function Signup() {
       !1,
       {
         fileName: "app/routes/signup.tsx",
-        lineNumber: 76,
+        lineNumber: 88,
         columnNumber: 5
       },
       this
@@ -2297,7 +2327,7 @@ function Signup() {
               !1,
               {
                 fileName: "app/routes/signup.tsx",
-                lineNumber: 103,
+                lineNumber: 115,
                 columnNumber: 8
               },
               this
@@ -2307,7 +2337,7 @@ function Signup() {
           !1,
           {
             fileName: "app/routes/signup.tsx",
-            lineNumber: 97,
+            lineNumber: 109,
             columnNumber: 7
           },
           this
@@ -2320,14 +2350,14 @@ function Signup() {
       !1,
       {
         fileName: "app/routes/signup.tsx",
-        lineNumber: 95,
+        lineNumber: 107,
         columnNumber: 5
       },
       this
     ),
     /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)(Button, { buttonType: "btn-accent" /* Accent */, children: "Signup" }, void 0, !1, {
       fileName: "app/routes/signup.tsx",
-      lineNumber: 114,
+      lineNumber: 126,
       columnNumber: 5
     }, this),
     actionData?.user?.confirmation_sent_at && /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)("p", { children: [
@@ -2335,16 +2365,16 @@ function Signup() {
       actionData?.user.email
     ] }, void 0, !0, {
       fileName: "app/routes/signup.tsx",
-      lineNumber: 116,
+      lineNumber: 128,
       columnNumber: 6
     }, this)
   ] }, void 0, !0, {
     fileName: "app/routes/signup.tsx",
-    lineNumber: 38,
+    lineNumber: 50,
     columnNumber: 4
   }, this) }, void 0, !1, {
     fileName: "app/routes/signup.tsx",
-    lineNumber: 37,
+    lineNumber: 49,
     columnNumber: 3
   }, this);
 }
@@ -2355,10 +2385,10 @@ __export(index_exports, {
   action: () => action5,
   default: () => Index,
   loader: () => loader5,
-  meta: () => meta2
+  meta: () => meta4
 });
 var import_node8 = require("@remix-run/node"), import_react20 = require("@remix-run/react");
-var import_jsx_dev_runtime20 = require("react/jsx-dev-runtime"), meta2 = ({ data }) => [
+var import_jsx_dev_runtime20 = require("react/jsx-dev-runtime"), meta4 = ({ data }) => [
   {
     title: data.user ? data.posts.length > 0 ? `@Connect | ${data.posts.length} post(s)` : "@Connect | No posts yet" : "@Connect | Login to view posts"
   },
@@ -2381,27 +2411,24 @@ var import_jsx_dev_runtime20 = require("react/jsx-dev-runtime"), meta2 = ({ data
     let image = formData.get("image"), title = formData.get("title"), userId = await getUserId(request, response);
     return await addPost(request, response, image, title, userId), (0, import_node8.json)(null, { headers: response.headers });
   }
-  if (_action === "comment")
+  if (_action === "comment") {
+    let comment = formData.get("comment");
     return await addComment(
       request,
       response,
-      "test",
+      comment,
       formData.get("post_id"),
       null,
       currentUser?.user.id
     ), (0, import_node8.json)(null, { headers: response.headers });
+  }
   if (_action === "like")
-    return await hasLikedPost(
+    return formData.get("liked") === "1" ? await likePost(
       request,
       response,
       currentUser?.user.id,
       formData.get("post_id")
-    ) ? await unLikePost(
-      request,
-      response,
-      currentUser?.user.id,
-      formData.get("post_id")
-    ) : await likePost(
+    ) : await unLikePost(
       request,
       response,
       currentUser?.user.id,
@@ -2410,7 +2437,7 @@ var import_jsx_dev_runtime20 = require("react/jsx-dev-runtime"), meta2 = ({ data
 };
 function Index() {
   let { user, posts, comments } = (0, import_react20.useLoaderData)();
-  return console.log(posts), /* @__PURE__ */ (0, import_jsx_dev_runtime20.jsxDEV)("div", { className: " ", children: /* @__PURE__ */ (0, import_jsx_dev_runtime20.jsxDEV)("div", { className: "grid max-w-lg mx-auto", children: posts && posts.map((post) => post?.user ? /* @__PURE__ */ (0, import_jsx_dev_runtime20.jsxDEV)(
+  return /* @__PURE__ */ (0, import_jsx_dev_runtime20.jsxDEV)("div", { className: " ", children: /* @__PURE__ */ (0, import_jsx_dev_runtime20.jsxDEV)("div", { className: "grid max-w-lg mx-auto", children: posts && posts.map((post) => post?.user ? /* @__PURE__ */ (0, import_jsx_dev_runtime20.jsxDEV)(
     Card,
     {
       post,
@@ -2423,21 +2450,21 @@ function Index() {
     !1,
     {
       fileName: "app/routes/_index.tsx",
-      lineNumber: 113,
+      lineNumber: 110,
       columnNumber: 9
     },
     this
   ) : /* @__PURE__ */ (0, import_jsx_dev_runtime20.jsxDEV)("div", {}, post.id, !1, {
     fileName: "app/routes/_index.tsx",
-    lineNumber: 122,
+    lineNumber: 119,
     columnNumber: 19
   }, this)) }, void 0, !1, {
     fileName: "app/routes/_index.tsx",
-    lineNumber: 108,
+    lineNumber: 105,
     columnNumber: 4
   }, this) }, void 0, !1, {
     fileName: "app/routes/_index.tsx",
-    lineNumber: 107,
+    lineNumber: 104,
     columnNumber: 3
   }, this);
 }
@@ -2447,21 +2474,30 @@ var login_exports = {};
 __export(login_exports, {
   action: () => action6,
   default: () => Login,
-  loader: () => loader6
+  loader: () => loader6,
+  meta: () => meta5
 });
 var import_react21 = require("@remix-run/react");
-var import_jsx_dev_runtime21 = require("react/jsx-dev-runtime");
+var import_jsx_dev_runtime21 = require("react/jsx-dev-runtime"), meta5 = ({ data }) => [
+  {
+    title: "@Connect | Login to view posts"
+  },
+  {
+    name: "description",
+    content: "Welcome to @Connect, a social media platform built for you."
+  }
+];
 async function action6({ request }) {
   let formData = await request.formData(), _action = formData.get("_action"), response = new Response();
   if (_action === "email")
-    return console.log("email action"), await LoginWPassword(
+    return await LoginWPassword(
       request,
       response,
       formData.get("email"),
       formData.get("password")
     );
   if (_action === "google")
-    return console.log("google action"), await LoginOAuth(request, response, "google");
+    return await LoginOAuth(request, response, "google");
 }
 async function loader6({ request }) {
   return new URL(request.url).searchParams.get("email_confirmed") ? { message: "Email Confirmed, you can now login" } : null;
@@ -2472,12 +2508,12 @@ function Login() {
     /* @__PURE__ */ (0, import_jsx_dev_runtime21.jsxDEV)(FormComponent, { method: "post", children: [
       email_confirmed && /* @__PURE__ */ (0, import_jsx_dev_runtime21.jsxDEV)("p", { className: "mx-auto font-bold", children: email_confirmed.message }, void 0, !1, {
         fileName: "app/routes/login.tsx",
-        lineNumber: 43,
+        lineNumber: 56,
         columnNumber: 6
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime21.jsxDEV)(InputComponent, { type: "hidden", value: "email", name: "_action" }, void 0, !1, {
         fileName: "app/routes/login.tsx",
-        lineNumber: 45,
+        lineNumber: 58,
         columnNumber: 5
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime21.jsxDEV)(
@@ -2493,12 +2529,12 @@ function Login() {
               children: [
                 /* @__PURE__ */ (0, import_jsx_dev_runtime21.jsxDEV)("path", { d: "M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" }, void 0, !1, {
                   fileName: "app/routes/login.tsx",
-                  lineNumber: 54,
+                  lineNumber: 67,
                   columnNumber: 8
                 }, this),
                 /* @__PURE__ */ (0, import_jsx_dev_runtime21.jsxDEV)("path", { d: "M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" }, void 0, !1, {
                   fileName: "app/routes/login.tsx",
-                  lineNumber: 55,
+                  lineNumber: 68,
                   columnNumber: 8
                 }, this)
               ]
@@ -2507,7 +2543,7 @@ function Login() {
             !0,
             {
               fileName: "app/routes/login.tsx",
-              lineNumber: 48,
+              lineNumber: 61,
               columnNumber: 7
             },
             this
@@ -2520,7 +2556,7 @@ function Login() {
         !1,
         {
           fileName: "app/routes/login.tsx",
-          lineNumber: 46,
+          lineNumber: 59,
           columnNumber: 5
         },
         this
@@ -2546,7 +2582,7 @@ function Login() {
                 !1,
                 {
                   fileName: "app/routes/login.tsx",
-                  lineNumber: 70,
+                  lineNumber: 83,
                   columnNumber: 8
                 },
                 this
@@ -2556,7 +2592,7 @@ function Login() {
             !1,
             {
               fileName: "app/routes/login.tsx",
-              lineNumber: 64,
+              lineNumber: 77,
               columnNumber: 7
             },
             this
@@ -2569,55 +2605,55 @@ function Login() {
         !1,
         {
           fileName: "app/routes/login.tsx",
-          lineNumber: 62,
+          lineNumber: 75,
           columnNumber: 5
         },
         this
       ),
       /* @__PURE__ */ (0, import_jsx_dev_runtime21.jsxDEV)(Button, { buttonType: "btn-accent" /* Accent */, children: "Login" }, void 0, !1, {
         fileName: "app/routes/login.tsx",
-        lineNumber: 82,
+        lineNumber: 95,
         columnNumber: 5
       }, this),
       error ? /* @__PURE__ */ (0, import_jsx_dev_runtime21.jsxDEV)("p", { className: "mx-auto", children: error.toString() }, void 0, !1, {
         fileName: "app/routes/login.tsx",
-        lineNumber: 83,
+        lineNumber: 96,
         columnNumber: 14
       }, this) : /* @__PURE__ */ (0, import_jsx_dev_runtime21.jsxDEV)(import_jsx_dev_runtime21.Fragment, {}, void 0, !1, {
         fileName: "app/routes/login.tsx",
-        lineNumber: 83,
+        lineNumber: 96,
         columnNumber: 62
       }, this)
     ] }, void 0, !0, {
       fileName: "app/routes/login.tsx",
-      lineNumber: 41,
+      lineNumber: 54,
       columnNumber: 4
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime21.jsxDEV)(FormComponent, { method: "post", children: [
       /* @__PURE__ */ (0, import_jsx_dev_runtime21.jsxDEV)(InputComponent, { type: "hidden", value: "google", name: "_action" }, void 0, !1, {
         fileName: "app/routes/login.tsx",
-        lineNumber: 87,
+        lineNumber: 100,
         columnNumber: 5
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime21.jsxDEV)(Button, { buttonType: "btn-ghost" /* Ghost */, children: "Login with Google" }, void 0, !1, {
         fileName: "app/routes/login.tsx",
-        lineNumber: 88,
+        lineNumber: 101,
         columnNumber: 5
       }, this)
     ] }, void 0, !0, {
       fileName: "app/routes/login.tsx",
-      lineNumber: 86,
+      lineNumber: 99,
       columnNumber: 4
     }, this)
   ] }, void 0, !0, {
     fileName: "app/routes/login.tsx",
-    lineNumber: 40,
+    lineNumber: 53,
     columnNumber: 3
   }, this);
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { entry: { module: "/build/entry.client-IYAGNZ7J.js", imports: ["/build/_shared/chunk-ZWGWGGVF.js", "/build/_shared/chunk-EHM6QMDP.js", "/build/_shared/chunk-GIAAE3CH.js", "/build/_shared/chunk-XU7DNSPJ.js", "/build/_shared/chunk-LK2J7O4Y.js", "/build/_shared/chunk-UWV35TSL.js", "/build/_shared/chunk-BOXFZXVX.js", "/build/_shared/chunk-PNG5AS42.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-OM6XSFCI.js", imports: ["/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-KTXNWLZK.js"], hasAction: !1, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/_index": { id: "routes/_index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/_index-MACSBATT.js", imports: ["/build/_shared/chunk-QZBLPBDB.js", "/build/_shared/chunk-OW4LD7OY.js"], hasAction: !0, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/auth.callback": { id: "routes/auth.callback", parentId: "root", path: "auth/callback", index: void 0, caseSensitive: void 0, module: "/build/routes/auth.callback-HTHTBQTT.js", imports: void 0, hasAction: !1, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/login": { id: "routes/login", parentId: "root", path: "login", index: void 0, caseSensitive: void 0, module: "/build/routes/login-C5DQA5JJ.js", imports: ["/build/_shared/chunk-OW4LD7OY.js"], hasAction: !0, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/logout": { id: "routes/logout", parentId: "root", path: "logout", index: void 0, caseSensitive: void 0, module: "/build/routes/logout-KGA3PCO6.js", imports: ["/build/_shared/chunk-OW4LD7OY.js"], hasAction: !0, hasLoader: !1, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/post.$postid": { id: "routes/post.$postid", parentId: "root", path: "post/:postid", index: void 0, caseSensitive: void 0, module: "/build/routes/post.$postid-2KBUYYGH.js", imports: ["/build/_shared/chunk-QZBLPBDB.js", "/build/_shared/chunk-OW4LD7OY.js"], hasAction: !0, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/signup": { id: "routes/signup", parentId: "root", path: "signup", index: void 0, caseSensitive: void 0, module: "/build/routes/signup-PRQEQSCU.js", imports: ["/build/_shared/chunk-OW4LD7OY.js"], hasAction: !0, hasLoader: !1, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/user.$username": { id: "routes/user.$username", parentId: "root", path: "user/:username", index: void 0, caseSensitive: void 0, module: "/build/routes/user.$username-QYVXHLX7.js", imports: ["/build/_shared/chunk-QZBLPBDB.js", "/build/_shared/chunk-OW4LD7OY.js"], hasAction: !0, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 } }, version: "dd5a52dc", hmr: { runtime: "/build/_shared\\chunk-LK2J7O4Y.js", timestamp: 1713638039093 }, url: "/build/manifest-DD5A52DC.js" };
+var assets_manifest_default = { entry: { module: "/build/entry.client-IYAGNZ7J.js", imports: ["/build/_shared/chunk-ZWGWGGVF.js", "/build/_shared/chunk-EHM6QMDP.js", "/build/_shared/chunk-GIAAE3CH.js", "/build/_shared/chunk-XU7DNSPJ.js", "/build/_shared/chunk-LK2J7O4Y.js", "/build/_shared/chunk-UWV35TSL.js", "/build/_shared/chunk-BOXFZXVX.js", "/build/_shared/chunk-PNG5AS42.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-QDPCQIWU.js", imports: ["/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-A5IJ267F.js"], hasAction: !1, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/_index": { id: "routes/_index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/_index-TBSW22EI.js", imports: ["/build/_shared/chunk-QZBLPBDB.js", "/build/_shared/chunk-OW4LD7OY.js"], hasAction: !0, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/auth.callback": { id: "routes/auth.callback", parentId: "root", path: "auth/callback", index: void 0, caseSensitive: void 0, module: "/build/routes/auth.callback-HTHTBQTT.js", imports: void 0, hasAction: !1, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/login": { id: "routes/login", parentId: "root", path: "login", index: void 0, caseSensitive: void 0, module: "/build/routes/login-XN2JYLXO.js", imports: ["/build/_shared/chunk-OW4LD7OY.js"], hasAction: !0, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/logout": { id: "routes/logout", parentId: "root", path: "logout", index: void 0, caseSensitive: void 0, module: "/build/routes/logout-K5UDCGE5.js", imports: ["/build/_shared/chunk-OW4LD7OY.js"], hasAction: !0, hasLoader: !1, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/post.$postid": { id: "routes/post.$postid", parentId: "root", path: "post/:postid", index: void 0, caseSensitive: void 0, module: "/build/routes/post.$postid-L3AGR4NU.js", imports: ["/build/_shared/chunk-QZBLPBDB.js", "/build/_shared/chunk-OW4LD7OY.js"], hasAction: !0, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/signup": { id: "routes/signup", parentId: "root", path: "signup", index: void 0, caseSensitive: void 0, module: "/build/routes/signup-U7B36ONB.js", imports: ["/build/_shared/chunk-OW4LD7OY.js"], hasAction: !0, hasLoader: !1, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/user.$username": { id: "routes/user.$username", parentId: "root", path: "user/:username", index: void 0, caseSensitive: void 0, module: "/build/routes/user.$username-XXUKWTXR.js", imports: ["/build/_shared/chunk-QZBLPBDB.js", "/build/_shared/chunk-OW4LD7OY.js"], hasAction: !0, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 } }, version: "13b24bda", hmr: { runtime: "/build/_shared\\chunk-LK2J7O4Y.js", timestamp: 1713708578644 }, url: "/build/manifest-13B24BDA.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var mode = "development", assetsBuildDirectory = "public\\build", future = { v3_fetcherPersist: !1, v3_relativeSplatPath: !1, v3_throwAbortReason: !1 }, publicPath = "/build/", entry = { module: entry_server_exports }, routes = {

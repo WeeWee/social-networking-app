@@ -3,44 +3,48 @@ import dayjs from "dayjs";
 import { TComments } from "~/types";
 
 export function Comment({
-	comment,
-
+	data,
 	children,
 	setComment,
 	setParentId,
 	isReply,
 }: {
-	comment: TComments;
+	data: TComments;
 	children?: React.ReactNode;
 	setComment: React.Dispatch<React.SetStateAction<string>>;
 	setParentId: React.Dispatch<React.SetStateAction<string>>;
 	isReply: boolean;
 }) {
+
 	let splitComment = "";
 	let username = "";
-	let newComment = comment.comment.text;
-	if (isReply) {
-		splitComment = comment.comment.text.split(" ")[0];
-		newComment = comment.comment.text.replace(splitComment, "");
+	let newComment = data.comment.text;
+	//" "Testing
+	//@username Testing
+	if (newComment.includes("@")) {
+		newComment.trimStart();
+		splitComment = data.comment.text.split(" ")[0];
+		newComment = data.comment.text.replace(splitComment, "");
 		newComment.trimStart();
 		username = splitComment.replace("@", "");
 	}
+
 	return (
 		<div className="my-2">
 			<div className="flex  items-center justify-center gap-1">
-				<Link to={`/user/${comment.user.username}`}>
+				<Link to={`/user/${data.user.username}`}>
 					<img
 						className="w-8 h-8 rounded-full object-cover"
-						src={comment.user.avatar}
+						src={data.user.avatar}
 					/>
 				</Link>
-				<p className=" inline-block max-w-fit">{comment.user.username}</p>
+				<p className=" inline-block max-w-fit">{data.user.username}</p>
 				<p className="text-sm text-gray-500">
-					{dayjs(comment.comment.created_at).fromNow()}
+					{dayjs(data.comment.created_at).fromNow()}
 				</p>
 			</div>
 			<div className="ml-9 text-sm flex gap-1">
-				{isReply && (
+				{username && (
 					<Link className="font-semibold" to={`/user/${username}`}>
 						{splitComment}
 					</Link>
@@ -49,11 +53,11 @@ export function Comment({
 			</div>
 			<button
 				onClick={() => {
-					setComment(`@${comment.user.username}`);
+					setComment(`@${data.user.username}`);
 					if (isReply) {
-						setParentId(comment.parent_comment!.id);
+						setParentId(data.parent_comment!.id);
 					} else {
-						setParentId(comment.comment.id);
+						setParentId(data.comment.id);
 					}
 				}}
 				className="text-sm "

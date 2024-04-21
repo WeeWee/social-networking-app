@@ -6,8 +6,8 @@ import {
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import type { TComments, TPost, TUser } from "~/types";
 import { AddCommentInput, ImageComponent } from ".";
-import { Form, Link } from "@remix-run/react";
-import { useRef, useState } from "react";
+import { Form, Link, useFetcher } from "@remix-run/react";
+import { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -30,6 +30,24 @@ export function Card({
 	);
 	const [comment, setComment] = useState("");
 	const commentInputRef = useRef<HTMLInputElement>(null);
+	const fetcher = useFetcher();
+	const liked = fetcher.formData
+		? fetcher.formData.get("liked") === "1"
+		: post.likes.find((like) => like.user.id === currentUser.id)
+		? true
+		: false;
+	const [likesLength, setLikesLength] = useState(post.likes.length);
+
+	useEffect(() => {
+		if (fetcher.formData) {
+			const formLiked = fetcher.formData.get("liked");
+			if (formLiked === "1") {
+				setLikesLength((prev) => prev + 1);
+			} else if (formLiked === "0") {
+				setLikesLength((prev) => prev - 1);
+			}
+		}
+	}, [fetcher.formData]);
 	return (
 		<div className="mx-auto my-1 aspect-[4/5] max-w-sm rounded-sm  text-base-content">
 			<div className="flex gap-2 my-2 items-center">
@@ -60,27 +78,28 @@ export function Card({
 			<div className=" pb-4 border-b border-b-neutral">
 				<div className="">
 					<section className="flex gap-2 items-center my-1 text-neutral-content">
-						<Form
+						<fetcher.Form
 							method="post"
 							encType="multipart/form-data"
 							className="flex items-center"
 						>
+							<input type="hidden" name="liked" value={liked ? "0" : "1"} />
 							<input type="hidden" name="post_id" value={post.id} />
 							<button name="_action" value="like">
-								{post.likes.find((like) => like.user.id === currentUser.id) ? (
+								{liked ? (
 									<HeartIconSolid className="w-7 h-7" />
 								) : (
 									<HeartIcon className="w-7 h-7" />
 								)}
 							</button>
-						</Form>
+						</fetcher.Form>
 						<button onClick={() => commentInputRef.current?.focus()}>
 							<ChatBubbleOvalLeftIcon className="w-7 h-7" />
 						</button>
 						<PaperAirplaneIcon className="w-7 h-7" />
 					</section>
 
-					<p className="text-sm font-semibold">{post.likes.length} likes</p>
+					<p className="text-sm font-semibold">{likesLength} likes</p>
 					<div className="flex gap-1">
 						<Link to={`/user/${post.user?.username}`} className="font-semibold">
 							{post.user?.username}

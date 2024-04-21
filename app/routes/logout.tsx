@@ -3,7 +3,6 @@ import { Logout } from "~/lib/auth.server";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
 	const response = new Response();
-	console.log("logout ");
 	return await Logout(request, response);
 };
 

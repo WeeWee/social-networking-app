@@ -1,5 +1,6 @@
 import { useActionData } from "@remix-run/react";
 import {
+	MetaFunction,
 	unstable_createMemoryUploadHandler,
 	unstable_parseMultipartFormData,
 	type ActionFunctionArgs,
@@ -11,6 +12,17 @@ import {
 	FormComponent,
 	InputComponent,
 } from "~/components";
+export const meta: MetaFunction = () => {
+	return [
+		{
+			title: "@Connect | Signup here",
+		},
+		{
+			name: "description",
+			content: "Welcome to @Connect, a social media platform built for you.",
+		},
+	];
+};
 export async function action({ request }: ActionFunctionArgs) {
 	const uploadHandler = unstable_createMemoryUploadHandler();
 	const formData = await unstable_parseMultipartFormData(

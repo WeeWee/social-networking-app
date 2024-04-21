@@ -30,20 +30,16 @@ export function CommentSection({
 				{comments
 					?.filter((comment) => comment.parent_comment === null)
 					.map((comment) => {
-						/* const commentAvatar = supabase.storage
-									.from(comment.user.avatar_bucket_id!)
-									.getPublicUrl(comment.user.avatar_name!); */
 						const replies = comments?.filter(
 							(child) => comment.comment.id === child.parent_comment?.id
 						);
-						console.log(replies);
 						return (
 							<div key={comment.comment.id}>
 								<Comment
 									isReply={false}
 									setComment={setComment}
 									setParentId={setParentId}
-									comment={comment}
+									data={comment}
 								>
 									<Replies
 										setParentId={setParentId}
@@ -60,11 +56,11 @@ export function CommentSection({
 					<Form method="post" className="w-7 h-7">
 						<input type="hidden" name="post_id" value={post.id} />
 						<button name="_action" value="like">
-						{post.likes.find((like) => like.user.id === currentUser.id) ? (
-									<HeartIconSolid className="w-7 h-7" />
-								) : (
-									<HeartIcon className="w-7 h-7" />
-								)}
+							{post.likes.find((like) => like.user.id === currentUser.id) ? (
+								<HeartIconSolid className="w-7 h-7" />
+							) : (
+								<HeartIcon className="w-7 h-7" />
+							)}
 						</button>
 					</Form>
 

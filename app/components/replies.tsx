@@ -37,15 +37,13 @@ export function Replies({
 
 			{showReplies &&
 				replies?.map((reply) => {
-					
-						
 					return (
 						<div className="ml-14" key={reply.comment.id}>
 							<Comment
 								isReply
 								setParentId={setParentId}
 								setComment={setComment}
-								comment={reply}
+								data={reply}
 							/>
 						</div>
 					);

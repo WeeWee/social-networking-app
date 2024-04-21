@@ -68,7 +68,7 @@ const getPosts = async (
 			return { user: newUser, image: image.data.publicUrl, ...restPost };
 		})
 	);
-	console.log(postsWithImages[0].likes);
+
 	return postsWithImages as TPost[];
 };
 const getImage = (request: Request, response: Response, post: TPostData) => {
@@ -85,12 +85,12 @@ const getComments = async (request: Request, response: Response) => {
 	const { data, error } = (await supabase(request, response)
 		.from("post_comment")
 		.select(
-			"post_id, comment:comments!post_comment_comment_id_fkey(id,text,created_at), parent_comment:comments!post_comment_parent_comment_id_fkey(id, text, created_at), user:users!post_comment_user_id_fkey(id, username, avatar_name, avatar_bucket_id)"
+			"post_id, comment:comments!post_comment_comment_id_fkey(id,text,created_at), parent_comment:comments!post_comment_parent_comment_id_fkey(id, text, created_at), user:users!public_post_comment_user_id_fkey(id, username, avatar_name, avatar_bucket_id)"
 		)) as {
 		data: TComments[] | null;
 		error: PostgrestError | null;
 	};
-	console.log(data);
+
 	if (error) {
 		console.error("get comments ", error);
 		return [];

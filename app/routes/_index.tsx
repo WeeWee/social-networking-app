@@ -61,10 +61,11 @@ export const action: ActionFunction = async ({ request }) => {
 		return json(null, { headers: response.headers });
 	}
 	if (_action === "comment") {
+		const comment = formData.get("comment") as string;
 		await addComment(
 			request,
 			response,
-			"test",
+			comment,
 			formData.get("post_id") as string,
 			null,
 			currentUser?.user.id as string
@@ -72,21 +73,17 @@ export const action: ActionFunction = async ({ request }) => {
 		return json(null, { headers: response.headers });
 	}
 	if (_action === "like") {
-		const hasLiked = await hasLikedPost(
-			request,
-			response,
-			currentUser?.user.id as string,
-			formData.get("post_id") as string
-		);
-		if (hasLiked) {
-			await unLikePost(
+		const likesPost = formData.get("liked") === "1";
+
+		if (likesPost) {
+			await likePost(
 				request,
 				response,
 				currentUser?.user.id as string,
 				formData.get("post_id") as string
 			);
 		} else {
-			await likePost(
+			await unLikePost(
 				request,
 				response,
 				currentUser?.user.id as string,
@@ -102,7 +99,7 @@ export default function Index() {
 		posts: TPost[];
 		comments: TComments[];
 	};
-	console.log(posts);
+
 	return (
 		<div className=" ">
 			<div className="grid max-w-lg mx-auto">

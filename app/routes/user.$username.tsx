@@ -2,6 +2,7 @@ import {
 	type ActionFunctionArgs,
 	json,
 	type LoaderFunctionArgs,
+	MetaFunction,
 	redirect,
 } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
@@ -15,12 +16,24 @@ import {
 } from "~/lib/database.server";
 import cn from "classnames";
 import type { TPost } from "~/types";
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	return [
+		{
+			title: data?.user
+				? `@Connect | ${data.user.username}`
+				: `@Connect | User not found`,
+		},
+		{
+			name: "description",
+			content: "Welcome to @Connect, a social media platform built for you.",
+		},
+	];
+};
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 	const { username } = params;
 	const response = new Response();
 	const currentUser = await getUser(request, response);
 	if (!currentUser?.user) return redirect("/login");
-	console.log(username);
 	const userData = await getUserByUsername(request, response, username!);
 	const is_following = await isFollowing(
 		request,
@@ -45,7 +58,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 	const userToFollow = await getUserByUsername(request, response, username!);
 	const formData = await request.formData();
 	const _action = formData.get("_action");
-	console.log(_action);
 	if (_action === "follow") {
 		await followUser(
 			request,

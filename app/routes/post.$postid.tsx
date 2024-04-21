@@ -17,9 +17,14 @@ import {
 } from "~/lib/database.server";
 import type { TComments, TPost, TUser } from "~/types";
 
-export const meta: MetaFunction = () => {
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	return [
-		{ title: "New Remix App" },
+		{
+			title:
+				data?.post && data.post.user
+					? `@Connect | ${data.post.title} by ${data.post.user.username}`
+					: `@Connect | Post not found`,
+		},
 		{ name: "description", content: "Welcome to Remix!" },
 	];
 };
