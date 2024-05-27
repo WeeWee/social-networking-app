@@ -16,3 +16,5 @@
 - Supbase Postgres Databse
 - Supabase Auth
 - Supabase Image Storage
+
+Check out the hosted project [here](https://adam-kindberg-social-app.vercel.app/)
